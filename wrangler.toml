@@ -11,4 +11,4 @@ pages_build_output_dir = "public"
 [[d1_databases]]
 binding = "DB"
 database_name = "clothbook"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "f1fd3a21-7179-4519-a71b-281357d2067c"
