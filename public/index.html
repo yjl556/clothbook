@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f5f4ef">
+  <title>服装记账</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<!-- ======== 登录页 ======== -->
+<section id="view-login" class="view hidden">
+  <div class="login-card">
+    <h1>服装记账</h1>
+    <p class="sub">三人共用 · 发货 / 退货 / 结算</p>
+    <form id="login-form">
+      <label for="login-username">账号</label>
+      <input type="text" id="login-username" autocomplete="username" required>
+      <label for="login-password">密码</label>
+      <input type="password" id="login-password" autocomplete="current-password" required>
+      <button type="submit" class="btn primary" id="login-btn">登 录</button>
+      <p id="login-msg" class="msg"></p>
+    </form>
+  </div>
+</section>
+
+<!-- ======== 主界面 ======== -->
+<section id="view-main" class="view hidden">
+  <header class="topbar">
+    <div class="brand">服装记账</div>
+    <div class="who" id="whoami"></div>
+  </header>
+
+  <main class="content">
+
+    <!-- 记账 -->
+    <div id="panel-add" class="panel">
+      <div class="card">
+        <div class="seg" id="type-seg">
+          <button type="button" class="seg-btn active" data-type="ship">发 货</button>
+          <button type="button" class="seg-btn" data-type="return">退 货</button>
+        </div>
+        <form id="add-form">
+          <label for="f-user">成员（谁）</label>
+          <select id="f-user" required></select>
+
+          <label for="f-product">货号</label>
+          <select id="f-product" required></select>
+          <p class="hint" id="price-hint"></p>
+
+          <label for="f-qty">数量</label>
+          <input type="number" id="f-qty" min="1" step="1" value="1" required>
+
+          <label for="f-date">日期（默认今天）</label>
+          <input type="date" id="f-date" required>
+
+          <label for="f-note">备注（可选）</label>
+          <input type="text" id="f-note" maxlength="100" placeholder="如：包邮、补发…">
+
+          <div class="amount-box">
+            <span class="amount-label" id="amount-label">应收金额</span>
+            <span class="amount-value" id="amount-value">¥0.00</span>
+            <small class="amount-detail" id="amount-detail"></small>
+          </div>
+
+          <button type="submit" class="btn primary" id="add-submit">保存记录</button>
+          <p id="add-msg" class="msg"></p>
+        </form>
+      </div>
+    </div>
+
+    <!-- 记录 -->
+    <div id="panel-records" class="panel hidden">
+      <div class="card filters">
+        <select id="r-user"><option value="">全部成员</option></select>
+        <select id="r-type">
+          <option value="">全部类型</option>
+          <option value="ship">发货</option>
+          <option value="return">退货</option>
+        </select>
+        <select id="r-status">
+          <option value="">全部状态</option>
+          <option value="unsettled">未结算 / 未退款</option>
+          <option value="settled">已结算 / 已退款</option>
+        </select>
+        <input type="month" id="r-month" title="按月份筛选">
+        <button type="button" class="btn small" id="r-reset">重置</button>
+      </div>
+      <div id="records-list" class="list"></div>
+    </div>
+
+    <!-- 统计 -->
+    <div id="panel-stats" class="panel hidden">
+      <div class="card" id="team-summary"></div>
+      <h3 class="section-title">按成员</h3>
+      <div id="stats-list" class="list"></div>
+    </div>
+
+    <!-- 管理（管理员） -->
+    <div id="panel-admin" class="panel hidden">
+      <div class="tabs2" id="admin-tabs">
+        <button type="button" class="atab active" data-atab="products">货号</button>
+        <button type="button" class="atab" data-atab="users">用户</button>
+        <button type="button" class="atab" data-atab="logs">日志</button>
+      </div>
+
+      <div id="apanel-products" class="apanel">
+        <div class="card">
+          <form id="product-form" class="inline-form">
+            <input type="text" id="p-code" placeholder="货号，如 T001" required>
+            <input type="text" id="p-name" placeholder="名称（可选）">
+            <input type="number" id="p-price" placeholder="单价（元）" step="0.01" min="0" required>
+            <button type="submit" class="btn primary small">添加货号</button>
+          </form>
+          <p class="msg" id="product-msg"></p>
+        </div>
+        <div id="product-list" class="list"></div>
+      </div>
+
+      <div id="apanel-users" class="apanel hidden">
+        <div class="card">
+          <form id="user-form" class="inline-form">
+            <input type="text" id="u-name" placeholder="账号名" required>
+            <input type="text" id="u-disp" placeholder="昵称/姓名（可选）">
+            <input type="password" id="u-pass" placeholder="初始密码（≥6位）" required>
+            <select id="u-role">
+              <option value="user">普通用户</option>
+              <option value="admin">管理员</option>
+            </select>
+            <button type="submit" class="btn primary small">添加用户</button>
+          </form>
+          <p class="msg" id="user-msg"></p>
+        </div>
+        <div id="user-list" class="list"></div>
+      </div>
+
+      <div id="apanel-logs" class="apanel hidden">
+        <div id="log-list" class="list"></div>
+      </div>
+    </div>
+
+    <!-- 我的 -->
+    <div id="panel-me" class="panel hidden">
+      <div class="card">
+        <h3>我的账号</h3>
+        <p id="me-info"></p>
+        <form id="pwd-form">
+          <label for="pw-old">原密码</label>
+          <input type="password" id="pw-old" required>
+          <label for="pw-new">新密码（至少 6 位）</label>
+          <input type="password" id="pw-new" required>
+          <button type="submit" class="btn primary">修改密码</button>
+          <p class="msg" id="pwd-msg"></p>
+        </form>
+        <button type="button" class="btn danger" id="logout-btn">退出登录</button>
+      </div>
+    </div>
+
+  </main>
+
+  <nav class="bottom-nav" id="bottom-nav">
+    <button type="button" class="tab active" data-tab="add">记账</button>
+    <button type="button" class="tab" data-tab="records">记录</button>
+    <button type="button" class="tab" data-tab="stats">统计</button>
+    <button type="button" class="tab hidden" data-tab="admin" id="nav-admin">管理</button>
+    <button type="button" class="tab" data-tab="me">我的</button>
+  </nav>
+</section>
+
+<div id="toast" class="toast hidden"></div>
+
+<!-- 编辑记录弹窗 -->
+<div id="modal" class="modal hidden">
+  <div class="modal-card">
+    <h3 id="modal-title">编辑记录</h3>
+    <form id="edit-form">
+      <input type="hidden" id="e-id">
+      <div class="seg" id="edit-type-seg">
+        <button type="button" class="seg-btn" data-type="ship">发 货</button>
+        <button type="button" class="seg-btn" data-type="return">退 货</button>
+      </div>
+      <label for="e-user">成员</label>
+      <select id="e-user" required></select>
+      <label for="e-product">货号</label>
+      <select id="e-product" required></select>
+      <p class="hint" id="e-price-hint"></p>
+      <label for="e-qty">数量</label>
+      <input type="number" id="e-qty" min="1" step="1" required>
+      <label for="e-date">日期</label>
+      <input type="date" id="e-date" required>
+      <label for="e-note">备注</label>
+      <input type="text" id="e-note" maxlength="100">
+      <div class="amount-box">
+        <span class="amount-label">金额</span>
+        <span class="amount-value" id="e-amount">¥0.00</span>
+        <small class="amount-detail" id="e-amount-detail"></small>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn" id="modal-cancel">取消</button>
+        <button type="submit" class="btn primary">保存</button>
+      </div>
+      <p class="msg" id="edit-msg"></p>
+    </form>
+  </div>
+</div>
+
+<script src="/js/app.js"></script>
+</body>
+</html>

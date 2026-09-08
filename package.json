@@ -1,0 +1,16 @@
+{
+  "name": "clothbook",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "服装发货退货记账 - Cloudflare Pages + D1",
+  "scripts": {
+    "dev": "wrangler pages dev public",
+    "deploy": "wrangler pages deploy public --project-name clothbook",
+    "db:local": "wrangler d1 migrations apply clothbook --local",
+    "db:remote": "wrangler d1 migrations apply clothbook --remote"
+  },
+  "devDependencies": {
+    "wrangler": "^3.78.0"
+  }
+}

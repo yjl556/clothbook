@@ -1,0 +1,14 @@
+# ============================================================
+# 服装发货退货记账 - Cloudflare Pages + D1 配置
+# 使用方法见 README.md「搭建流程」
+# ============================================================
+
+name = "clothbook"
+compatibility_date = "2025-06-01"
+pages_build_output_dir = "public"
+
+# D1 数据库绑定（第二步创建数据库后，把返回的 database_id 填到下面）
+[[d1_databases]]
+binding = "DB"
+database_name = "clothbook"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
